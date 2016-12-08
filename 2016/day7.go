@@ -39,7 +39,6 @@ func main() {
 		for i := 0; i <= len(line)-4; i++ {
 			if string(line[i]) == "[" {
 				withinBrackets = true
-
 			}
 			if string(line[i]) == "]" {
 				withinBrackets = false

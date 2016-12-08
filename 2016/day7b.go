@@ -36,33 +36,58 @@ func main() {
 	for scanner.Scan() {
 		line := scanner.Text()
 		var withinBrackets bool = false
-		var found bool = false
-		for i := 0; i <= len(line)-4; i++ {
+		var foundBoth bool = false
+		var innerPiece string = ""
+		var outerPiece string = ""
+		outerCandidates := []string{}
+		innerCandidates := []string{}
+		for i := 0; i <= len(line)-3; i++ {
 			if string(line[i]) == "[" {
 				withinBrackets = true
-
 			}
 			if string(line[i]) == "]" {
 				withinBrackets = false
 			}
-			if string(line[i]) == string(line[i+3]) &&
-				string(line[i+1]) == string(line[i+2]) {
+			if string(line[i]) == string(line[i+2]) &&
+				string(line[i]) != string(line[i+1]) {
 				if withinBrackets {
-					if string(line[i]) != string(line[i+1]) {
-						found = false
+					innerPiece = string(line[i : i+3])
+					if outerPiece != "" &&
+						string(line[i]) == outerPiece[1:2] &&
+						string(line[i+1]) == outerPiece[0:1] {
+						foundBoth = true
 						break
+					} else {
+						innerCandidates = append(innerCandidates, innerPiece)
 					}
-				}
-				if string(line[i]) == string(line[i+1]) {
-					found = false
 				} else {
-					found = true
+					outerPiece = string(line[i : i+3])
+					if innerPiece != "" &&
+						string(line[i]) == innerPiece[1:2] &&
+						string(line[i+1]) == innerPiece[0:1] {
+						foundBoth = true
+						break
+					} else {
+						outerCandidates = append(outerCandidates, outerPiece)
+					}
 				}
 			}
 		}
-		if found {
+		if foundBoth || matchWasFound(innerCandidates, outerCandidates) {
 			accu++
 		}
 	}
-	fmt.Printf("The number of IP lines supporting tls is %d\n", accu)
+	fmt.Printf("The number of IP lines supporting ssl is %d\n", accu)
+}
+
+func matchWasFound(inner []string, outer []string) bool {
+	for i := range inner {
+		for o := range outer {
+			if inner[i][0:1] == outer[o][1:2] &&
+				outer[o][0:1] == inner[i][1:2] {
+				return true
+			}
+		}
+	}
+	return false
 }

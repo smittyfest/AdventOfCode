@@ -36,9 +36,6 @@ func main() {
 	for scanner.Scan() {
 		line := scanner.Text()
 		var withinBrackets bool = false
-		var foundBoth bool = false
-		var innerPiece string = ""
-		var outerPiece string = ""
 		outerCandidates := []string{}
 		innerCandidates := []string{}
 		for i := 0; i <= len(line)-3; i++ {
@@ -51,29 +48,13 @@ func main() {
 			if string(line[i]) == string(line[i+2]) &&
 				string(line[i]) != string(line[i+1]) {
 				if withinBrackets {
-					innerPiece = string(line[i : i+3])
-					if outerPiece != "" &&
-						string(line[i]) == outerPiece[1:2] &&
-						string(line[i+1]) == outerPiece[0:1] {
-						foundBoth = true
-						break
-					} else {
-						innerCandidates = append(innerCandidates, innerPiece)
-					}
+					innerCandidates = append(innerCandidates, string(line[i:i+3]))
 				} else {
-					outerPiece = string(line[i : i+3])
-					if innerPiece != "" &&
-						string(line[i]) == innerPiece[1:2] &&
-						string(line[i+1]) == innerPiece[0:1] {
-						foundBoth = true
-						break
-					} else {
-						outerCandidates = append(outerCandidates, outerPiece)
-					}
+					outerCandidates = append(outerCandidates, string(line[i:i+3]))
 				}
 			}
 		}
-		if foundBoth || matchWasFound(innerCandidates, outerCandidates) {
+		if matchWasFound(innerCandidates, outerCandidates) {
 			accu++
 		}
 	}
